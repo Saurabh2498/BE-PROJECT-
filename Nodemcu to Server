@@ -1,0 +1,109 @@
+// Code to upload data from nodemcu to the thingspeak server//
+#include "ThingSpeak.h"
+#include <ESP8266WiFi.h>
+//----------- Enter you Wi-Fi Details---------//
+char ssid[] = "hacked"; //SSID
+char pass[] = "123456789"; // Password
+//-------------------------------------------//
+#define LED1 D2
+#define LED2 D5
+#define LED3 D8
+const int trigger1 = 16;
+const int echo1 = 5;
+const int trigger2 = 0;
+const int echo2 = 2;
+const int trigger3 = 12;
+const int echo3 = 13;
+long T;
+float distanceCM1;
+long P;
+float distanceCM2;
+long R;
+float distanceCM3;
+27
+WiFiClient client;
+unsigned long myChannelField = 1050001; // Channel ID
+const int ChannelField1 = 1; // Which channel to write data
+const int ChannelField2 = 2; // Which channel to write data
+const int ChannelField3 = 3; // Which channel to write data
+const char * myWriteAPIKey = "UW1D66QG01G0O42O"; // Your write API Key
+void setup()
+{
+ Serial.begin(115200);
+ pinMode(trigger1, OUTPUT);
+ pinMode(echo1, INPUT);
+ pinMode(LED1,OUTPUT);
+ pinMode(trigger2, OUTPUT);
+ pinMode(echo2, INPUT);
+ pinMode(LED2,OUTPUT);
+ pinMode(trigger3, OUTPUT);
+ pinMode(echo3, INPUT);
+ pinMode(LED3,OUTPUT);
+ WiFi.mode(WIFI_STA);
+ ThingSpeak.begin(client);
+}
+void loop()
+{
+ if (WiFi.status() != WL_CONNECTED)
+ {
+ Serial.print("Attempting to connect to SSID: ");
+ Serial.println(ssid);
+28
+ while (WiFi.status() != WL_CONNECTED)
+ {
+ WiFi.begin(ssid, pass);
+ Serial.print(" not connected ");
+ delay(5000);
+ }
+ Serial.println("\nConnected.");
+ }
+ digitalWrite(trigger1, LOW);
+ delay(1);
+ digitalWrite(trigger1, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigger1, LOW);
+ T = pulseIn(echo1, HIGH);
+ distanceCM1 = T * 0.034;
+ distanceCM1 = distanceCM1 / 2;
+ Serial.print("Distance1 in cm: ");
+ Serial.println(distanceCM1);
+ ThingSpeak.writeField(myChannelField, ChannelField1, distanceCM1, myWriteAPIKey);
+ delay(500);
+ if(distanceCM1 <=5)
+ {
+ digitalWrite(LED1,HIGH);
+ }
+ digitalWrite(trigger2, LOW);
+ delay(1);
+ digitalWrite(trigger2, HIGH);
+ delayMicroseconds(10);
+digitalWrite(trigger2, LOW);
+29
+ P = pulseIn(echo2, HIGH);
+ distanceCM2 = P * 0.034;
+ distanceCM2 = distanceCM2 / 2;
+ Serial.print("Distance2 in cm: ");
+ Serial.println(distanceCM2);
+ ThingSpeak.writeField(myChannelField, ChannelField2, distanceCM2, myWriteAPIKey);
+ delay(500);
+ if(distanceCM2 <=5)
+ {
+ digitalWrite(LED2,HIGH);
+ }
+ digitalWrite(trigger3, LOW);
+ delay(1);
+ digitalWrite(trigger3, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigger3, LOW);
+ T = pulseIn(echo3, HIGH);
+ distanceCM3 = R * 0.034;
+ distanceCM3 = distanceCM3 / 2;
+ Serial.print("Distance3 in cm: ");
+ Serial.println(distanceCM3);
+ ThingSpeak.writeField(myChannelField, ChannelField3, distanceCM3, myWriteAPIKey);
+ delay(500);
+ if(distanceCM3 <=5)
+ {
+digitalWrite(LED3,HIGH);
+ }
+}
