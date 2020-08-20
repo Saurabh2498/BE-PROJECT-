@@ -1,0 +1,6 @@
+# BE-PROJECT-
+This paper is proposed IOT based smart waste management system which segregates the Dry, Wet, Metallic Waste in Respective Bins & checks the waste level over the dustbins 
+by using sensor systems. 
+The details of the bins can be directly viewed through app. The app shows the details of the bins like location of the bin, the amount of garbage in it and the time it
+was cleaned previously. Once the dustbin level is full it will directly send a notification to the authorities.This system will help workers to collect the waste from the
+bins which are fully filled and thosewho need urgent cleaning. 
