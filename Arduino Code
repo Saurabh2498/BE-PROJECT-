@@ -1,0 +1,87 @@
+ARDUINO CODE :-
+#include <Servo.h>
+#define trigPin 7
+#define echoPin 6
+#define trigpin 11
+#define echopin 12
+Servo servo;
+Servo servo1;
+Servo servo2;
+int sound = 250;
+int limitswitch = 13;
+int state = LOW;
+const int sensor_pin = A0;
+void setup() {
+ Serial.begin(9600);
+ pinMode(trigPin, OUTPUT);
+ pinMode(echoPin, INPUT);
+ pinMode(trigpin, OUTPUT);
+ pinMode(echopin, INPUT);
+
+ pinMode(limitswitch,INPUT);
+ servo.attach(2);
+ servo1.attach(3);
+servo2.attach(4);
+ pinMode(sensor_pin,INPUT);
+}
+void loop() {
+ long duration, distance;
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = (duration/2) / 29.1;
+if (distance < 7) {
+Serial.println("the distance is less than 5");
+servo.write(90);
+servo1.write(90);
+delay(1000);
+}
+else {
+servo.write(0);
+servo1.write(0);
+}
+if (distance > 60 || distance <= 0){
+Serial.println("The distance is more than 60");
+}
+else {
+Serial.print(distance);
+Serial.println(" cm");
+}
+delay(500);
+ long duration1, distance1;
+ float moisture_percentage;
+ int sensor_analog;
+ int val = digitalRead(limitswitch);
+ sensor_analog = analogRead(sensor_pin);
+ moisture_percentage = ( 100 - ( (sensor_analog/1023.00) * 100 ) );
+ Serial.print("Moisture Percentage = ");
+ Serial.print(moisture_percentage);
+ digitalWrite(trigPin, LOW);
+ delayMicroseconds(2);
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+ duration1 = pulseIn(echoPin, HIGH);
+ distance1 = (duration1/2) / 29.1;
+ if (val != state){
+ state = val;
+ if ((moisture_percentage <= 20 ) && (state ==0))
+ {
+ Servo2.write(180);
+ delay(4000);
+ }
+ }
+ if ((moisture_percentage >= 20 ) && (state != 0 ) ) {
+ servo2.write(0);
+ delay(180);
+ }
+ else{
+ servo.write(90);
+ }
+ Serial.print("%\n\n");
+ delay(1000);
+}
+
